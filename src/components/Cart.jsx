@@ -280,7 +280,7 @@ const Cart = () => {
                   </div>
                 </button>
                 <button className={`shipping-option-btn ${paymentMethod === 'spei' ? 'active' : ''}`} onClick={() => { setPaymentMethod('spei'); handleSpeiPay(); }}>
-                  <span className="pm-emoji">🏦</span>
+                  <img src="/spei.png" alt="SPEI" className="pm-img" />
                   <div className="shipping-option-info">
                     <span className="option-name">Transferencia SPEI</span>
                     <span className="option-desc">Paga desde tu banco en minutos</span>
