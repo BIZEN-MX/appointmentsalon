@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import { Scissors, Palette, Smile, Hand, Wind, Clock, CheckCircle, ChevronRight, ChevronLeft, CalendarDays, User, Lock } from 'lucide-react';
+import { Scissors, Palette, Smile, Hand, Wind, Clock, CheckCircle, ChevronRight, ChevronLeft, CalendarDays, User, Lock, Sparkles, ArrowRight } from 'lucide-react';
 
 const SERVICES = [
   {
@@ -45,6 +45,8 @@ const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Ago
 const DAYS_ES   = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
 const BookingPage = ({ isAdmin }) => {
+  const navigate  = useNavigate();
+  const location  = useLocation();
   const [step, setStep] = useState(1);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
@@ -61,10 +63,18 @@ const BookingPage = ({ isAdmin }) => {
   const [oxxoRef, setOxxoRef] = useState('');
   const [speiRef, setSpeiRef] = useState('');
 
+  // ── Restore selection from Auth redirect ────────────────────────
+  useEffect(() => {
+    if (location.state?.selectedService && location.state?.selectedTime) {
+      console.log('Recuperando estado de reserva tras login...');
+      setSelectedService(location.state.selectedService);
+      setSelectedTime(location.state.selectedTime);
+      if (location.state.step) setStep(location.state.step);
+    }
+  }, [location.state]);
+
   const selectedDate = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
 
-  const navigate  = useNavigate();
-  const location  = useLocation();
 
   useEffect(() => {
     checkUser();
@@ -176,9 +186,18 @@ const BookingPage = ({ isAdmin }) => {
   };
 
   const handleStepChange = async (nextStep) => {
+    console.log('Solicitando cambio a paso:', nextStep);
     // If going to payment (Step 3), must be logged in
     if (nextStep === 3 && !user && !isAdmin) {
-      navigate('/auth', { state: { from: location.pathname, message: 'Inicia sesión para pagar tu anticipo' } });
+      console.log('Usuario no autenticado, redirigiendo con estado...');
+      navigate('/auth', { 
+        state: { 
+          from: location.pathname, 
+          selectedService, 
+          selectedTime, 
+          step: 3 
+        } 
+      });
       return;
     }
     setStep(nextStep);

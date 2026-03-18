@@ -36,8 +36,9 @@ const Auth = () => {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        const destination = location.state?.from || '/';
-        navigate(destination);
+        const { from, ...restOfState } = location.state || {};
+        const destination = from || '/';
+        navigate(destination, { state: restOfState });
       } else {
         const { error } = await supabase.auth.signUp({
           email,
