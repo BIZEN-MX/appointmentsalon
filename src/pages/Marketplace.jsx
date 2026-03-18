@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { ShoppingCart, Heart, Star, Package } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 const Marketplace = () => {
   const { addToCart } = useCart();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('Todos');
@@ -57,7 +59,7 @@ const Marketplace = () => {
         <div className="mp-hero-content">
           <span className="mp-hero-tag">Colección Exclusiva</span>
           <h1>Marketplace</h1>
-          <p>Lleva la experiencia del Spa a tu hogar con nuestros productos de alta gama.</p>
+          <p>Lleva la experiencia de nuestro salón a tu hogar con productos exclusivos.</p>
         </div>
       </div>
 

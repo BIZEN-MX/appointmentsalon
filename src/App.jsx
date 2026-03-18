@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { Instagram, Facebook } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import BookingPage from './pages/BookingPage';
@@ -43,8 +44,12 @@ const App = () => {
             <div className="footer-social">
               <h4>Síguenos</h4>
               <div className="social-links">
-                <a href="#">Instagram</a>
-                <a href="#">Facebook</a>
+                <a href="#" target="_blank" rel="noopener noreferrer">
+                  <Instagram size={20} /> Instagram
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer">
+                  <Facebook size={20} /> Facebook
+                </a>
               </div>
             </div>
           </div>
