@@ -1,0 +1,94 @@
+:root {
+  /* User-provided palette */
+  --gris-perla: #D1DADF;
+  --gris-calido: #9E9F9D;
+  --greige: #615C56;
+  --beige-suave: #C2B6A7;
+  --beige-arena: #9D8F7B;
+  --cafe-madera: #8B7359;
+  --cafe-miel: #A0652D;
+  --negro-espresso: #211F1C;
+
+  /* UI Tokens */
+  --bg-color: var(--gris-perla);
+  --text-primary: var(--negro-espresso);
+  --text-secondary: var(--greige);
+  --accent: var(--cafe-miel);
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: var(--gris-perla);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: inherit;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+section {
+  padding: 6rem 0;
+}
+
+.glass-morphism {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+}
+
+.btn-primary {
+  background-color: var(--cafe-madera);
+  color: white;
+  padding: 0.8rem 2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  background-color: var(--greige);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--cafe-miel), var(--cafe-madera));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
