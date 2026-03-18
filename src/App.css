@@ -1928,6 +1928,120 @@
   gap: 3rem;
 }
 
+/* ── MARKETPLACE ADMIN ────────────────────────────────── */
+.mp-admin-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem 1.5rem;
+  border-top: 1px solid #f0ece6;
+  margin-top: auto;
+}
+
+.mp-admin-actions button {
+  flex: 1;
+  background: white;
+  border: 1.5px solid #d4c9bd;
+  border-radius: 8px;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: var(--greige);
+}
+
+.mp-admin-actions button:hover {
+  border-color: var(--cafe-miel);
+  color: var(--cafe-miel);
+  background: rgba(160, 101, 45, 0.05);
+}
+
+.mp-admin-actions button.del:hover {
+  border-color: #ff4444;
+  color: #ff4444;
+  background: rgba(255, 68, 68, 0.05);
+}
+
+.mp-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(33, 31, 28, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.mp-modal {
+  background: white;
+  width: 100%;
+  max-width: 650px;
+  border-radius: 24px;
+  padding: 2.5rem;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.mp-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.mp-modal-header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: var(--negro-espresso);
+  margin: 0;
+}
+
+.mp-modal-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--gris-calido);
+  transition: color 0.25s;
+}
+
+.mp-modal-header button:hover { color: var(--negro-espresso); }
+
+.mp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mp-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.mp-modal-footer button {
+  padding: 0.8rem 1.5rem;
+}
+
+/* Card layout adjustments for admin */
+.mp-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.mp-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.mp-card-footer {
+  margin-top: auto;
+}
+
 /* Card */
 .mp-card {
   background: white;

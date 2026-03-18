@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import { ShoppingCart, Heart, Star, Package } from 'lucide-react';
+import { ShoppingCart, Heart, Star, Package, Plus, Edit2, Trash2, X, Check, Eye, EyeOff } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
-const Marketplace = () => {
+const Marketplace = ({ isAdmin }) => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -12,6 +12,18 @@ const Marketplace = () => {
   const [activeCategory, setActiveCategory] = useState('Todos');
   const [wishlist, setWishlist] = useState([]);
   const [addedMap, setAddedMap] = useState({});
+
+  // Admin specific state
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    category: '',
+    description: '',
+    price: '',
+    stock: '',
+    image_url: ''
+  });
 
   useEffect(() => {
     fetchProducts();
@@ -42,6 +54,47 @@ const Marketplace = () => {
     );
   };
 
+  // ── Admin CRUD ────────────────────────────────────────────────────
+  const openAddModal = () => {
+    setEditingId(null);
+    setFormData({ name: '', category: '', description: '', price: '', stock: '', image_url: '' });
+    setShowModal(true);
+  };
+
+  const openEditModal = (p) => {
+    setEditingId(p.id);
+    setFormData({ ...p });
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('¿Estás seguro de eliminar este producto?')) return;
+    const { error } = await supabase.from('products').delete().eq('id', id);
+    if (!error) fetchProducts();
+    else alert('Error: ' + error.message);
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    const payload = { ...formData, price: parseFloat(formData.price), stock: parseInt(formData.stock) };
+    
+    if (editingId) {
+      const { error } = await supabase.from('products').update(payload).eq('id', editingId);
+      if (!error) { setShowModal(false); fetchProducts(); }
+      else alert('Error: ' + error.message);
+    } else {
+      const { error } = await supabase.from('products').insert([payload]);
+      if (!error) { setShowModal(false); fetchProducts(); }
+      else alert('Error: ' + error.message);
+    }
+  };
+
+  const toggleStock = async (p) => {
+    const newStock = p.stock > 0 ? 0 : 10;
+    const { error } = await supabase.from('products').update({ stock: newStock }).eq('id', p.id);
+    if (!error) fetchProducts();
+  };
+
   if (loading) {
     return (
       <div className="mp-loading">
@@ -58,8 +111,14 @@ const Marketplace = () => {
         <div className="mp-hero-overlay" />
         <div className="mp-hero-content">
           <span className="mp-hero-tag">Colección Exclusiva</span>
-          <h1>Marketplace</h1>
-          <p>Lleva la experiencia de nuestro salón a tu hogar con productos exclusivos.</p>
+          <h1>{isAdmin ? 'Gestión de Productos' : 'Marketplace'}</h1>
+          <p>{isAdmin ? 'Administra el inventario, precios y existencias de la tienda.' : 'Lleva la experiencia de nuestro salón a tu hogar con productos exclusivos.'}</p>
+          
+          {isAdmin && (
+            <button className="btn-primary fade-in" style={{ marginTop: '2rem' }} onClick={openAddModal}>
+              <Plus size={18} /> NUEVO PRODUCTO
+            </button>
+          )}
         </div>
       </div>
 
@@ -127,12 +186,70 @@ const Marketplace = () => {
                       )}
                     </button>
                   </div>
+
+                  {/* Admin actions bottom row */}
+                  {isAdmin && (
+                    <div className="mp-admin-actions fade-in">
+                      <button onClick={() => openEditModal(product)} title="Editar"><Edit2 size={14}/></button>
+                      <button onClick={() => toggleStock(product)} title={product.stock > 0 ? "Marcar agotado" : "Poner en stock"}>
+                        {product.stock > 0 ? <EyeOff size={14}/> : <Eye size={14}/>}
+                      </button>
+                      <button onClick={() => handleDelete(product.id)} className="del" title="Eliminar"><Trash2 size={14}/></button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* ── ADMIN MODAL ────────────────────────────────────────────── */}
+      {showModal && (
+        <div className="mp-modal-overlay fade-in">
+          <div className="mp-modal card fade-in">
+            <div className="mp-modal-header">
+              <h3>{editingId ? 'Editar Producto' : 'Añadir Producto'}</h3>
+              <button onClick={() => setShowModal(false)}><X size={24} /></button>
+            </div>
+            <form onSubmit={handleSave} className="mp-form">
+              <div className="form-group">
+                <label>Nombre del Producto</label>
+                <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Ej. Champú Reparador Keratina" />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Categoría</label>
+                  <input required value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} placeholder="Hair, Skin, Nails..." />
+                </div>
+                <div className="form-group">
+                  <label>Precio ($)</label>
+                  <input required type="number" step="0.01" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} placeholder="0.00" />
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Stock inicial</label>
+                  <input required type="number" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} placeholder="0" />
+                </div>
+                <div className="form-group">
+                  <label>URL Imagen (Unsplash)</label>
+                  <input required value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} placeholder="https://..." />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Descripción corta</label>
+                <textarea required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Describe los beneficios..." />
+              </div>
+              <div className="mp-modal-footer">
+                <button type="button" className="btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
+                <button type="submit" className="btn-primary"><Check size={18} /> {editingId ? 'Guardar Cambios' : 'Crear Producto'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
