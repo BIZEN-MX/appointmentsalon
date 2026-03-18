@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
 import { ArrowRight, Clock, Star, Sparkles, Quote, Shield, Leaf, Award, CalendarCheck, Users, Zap } from 'lucide-react';
 
 const SERVICES = [
@@ -125,7 +126,14 @@ const Home = () => {
           </p>
 
           <div className="hero-v2-btns fade-in delay-3">
-            <button onClick={() => navigate('/booking')} className="btn-hero-primary">
+            <button 
+              onClick={async () => {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) navigate('/auth', { state: { from: '/booking' } });
+                else navigate('/booking');
+              }} 
+              className="btn-hero-primary"
+            >
               RESERVAR CITA <ArrowRight size={18} />
             </button>
             <a href="#services" className="btn-hero-ghost">Ver Servicios</a>
@@ -177,7 +185,14 @@ const Home = () => {
                     <span className="sv2-meta-item"><Clock size={14} /> {s.duration}</span>
                     <span className="sv2-price">{s.price}</span>
                   </div>
-                  <button className="sv2-cta" onClick={() => handleServiceSelect(s.serviceObj)}>
+                  <button 
+                    className="sv2-cta" 
+                    onClick={async () => {
+                      const { data: { session } } = await supabase.auth.getSession();
+                      if (!session) navigate('/auth', { state: { from: '/booking', selectedService: s.serviceObj } });
+                      else navigate('/booking', { state: { selectedService: s.serviceObj } });
+                    }}
+                  >
                     Reservar ahora <ArrowRight size={16} />
                   </button>
                 </div>
@@ -299,7 +314,14 @@ const Home = () => {
           <h2>La Mejor Versión de Ti,<br /><em>A Un Clic de Distancia</em></h2>
           <p>Regálate una experiencia que te hará sentir única. Agenda hoy y recibe una consulta personalizada sin cargo.</p>
           <div className="cta-banner-btns">
-            <button className="btn-hero-primary" onClick={() => navigate('/booking')}>
+            <button 
+              className="btn-hero-primary" 
+              onClick={async () => {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) navigate('/auth', { state: { from: '/booking' } });
+                else navigate('/booking');
+              }}
+            >
               RESERVAR AHORA <ArrowRight size={18} />
             </button>
             <a href="tel:+525512345678" className="btn-hero-ghost">📞 Llamar al salón</a>

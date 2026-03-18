@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react';
 import './Auth.css';
@@ -13,6 +13,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleAuth = async (e) => {
     e.preventDefault();
@@ -21,7 +22,8 @@ const Auth = () => {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate('/booking');
+        const destination = location.state?.from || '/';
+        navigate(destination);
       } else {
         const { error } = await supabase.auth.signUp({
           email,

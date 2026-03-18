@@ -47,7 +47,17 @@ const Navbar = ({ isAdmin, setIsAdmin }) => {
               {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </button>
           </li>
-          <li><Link to="/booking" className="btn-nav">Reservar Ahora</Link></li>
+          <li>
+            <button 
+              className="btn-nav" 
+              onClick={() => {
+                if (!user && !isAdmin) navigate('/auth', { state: { from: '/booking' } });
+                else navigate('/booking');
+              }}
+            >
+              Reservar Ahora
+            </button>
+          </li>
           
           {user ? (
             <li className="user-menu">
