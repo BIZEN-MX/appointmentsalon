@@ -208,6 +208,44 @@
   margin: 0;
 }
 
+/* ── FEEDBACK BOXES ───────────── */
+.auth-error-box, .auth-success-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  margin-top: 0.5rem;
+}
+
+.auth-error-box {
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  color: #b91c1c;
+}
+
+.auth-success-box {
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  color: #15803d;
+}
+
+.error-dot, .success-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.error-dot { background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+.success-dot { background: #22c55e; box-shadow: 0 0 8px rgba(34, 197, 94, 0.4); }
+
+.auth-error-box p, .auth-success-box p {
+  margin: 0;
+}
+
 /* ── FORM FIELDS ──────────────── */
 .auth-form-body {
   display: flex;

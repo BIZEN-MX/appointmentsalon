@@ -12,12 +12,26 @@ const Auth = () => {
   const [fullName, setFullName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+
+  const getFriendlyErrorMessage = (err) => {
+    const msg = err.message.toLowerCase();
+    if (msg.includes('invalid login credentials')) return 'Email o contraseña incorrectos. Por favor, verifica tus datos.';
+    if (msg.includes('user not found')) return 'No existe ninguna cuenta con este correo electrónico.';
+    if (msg.includes('email not confirmed')) return 'Por favor, confirma tu correo electrónico para poder iniciar sesión.';
+    if (msg.includes('password is too short')) return 'La contraseña es demasiado corta. Debe tener al menos 6 caracteres.';
+    if (msg.includes('already registered') || msg.includes('user already exists')) return 'Este correo ya está registrado. Intenta iniciar sesión.';
+    return err.message; // Fallback
+  };
 
   const handleAuth = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMessage('');
+    setSuccessMessage('');
     try {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -31,17 +45,23 @@ const Auth = () => {
           options: { data: { full_name: fullName } }
         });
         if (error) throw error;
-        alert('Revisa tu correo para confirmar tu cuenta.');
+        setSuccessMessage('¡Cuenta creada! Por favor, revisa tu correo para confirmarla.');
       }
     } catch (error) {
       if (error.status === 429) {
-        alert("Has hecho demasiados intentos. Por favor, espera unos minutos antes de volver a intentarlo (límite de seguridad de Supabase).");
+        setErrorMessage("Demasiados intentos. Por favor, espera unos minutos antes de volver a intentar.");
       } else {
-        alert(error.message);
+        setErrorMessage(getFriendlyErrorMessage(error));
       }
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleMode = () => {
+    setIsLogin(!isLogin);
+    setErrorMessage('');
+    setSuccessMessage('');
   };
 
   return (
@@ -86,13 +106,13 @@ const Auth = () => {
           <div className="auth-tabs">
             <button
               className={`auth-tab ${isLogin ? 'active' : ''}`}
-              onClick={() => setIsLogin(true)}
+              onClick={() => { setIsLogin(true); setErrorMessage(''); setSuccessMessage(''); }}
             >
               Iniciar Sesión
             </button>
             <button
               className={`auth-tab ${!isLogin ? 'active' : ''}`}
-              onClick={() => setIsLogin(false)}
+              onClick={() => { setIsLogin(false); setErrorMessage(''); setSuccessMessage(''); }}
             >
               Registrarse
             </button>
@@ -103,6 +123,21 @@ const Auth = () => {
             <h1>{isLogin ? 'Bienvenido de nuevo' : 'Crea tu cuenta'}</h1>
             <p>{isLogin ? 'Accede y empieza a reservar.' : 'Únete a nuestra comunidad exclusiva.'}</p>
           </div>
+
+          {/* Feedback Messages */}
+          {errorMessage && (
+            <div className="auth-error-box fade-in">
+              <span className="error-dot" />
+              <p>{errorMessage}</p>
+            </div>
+          )}
+
+          {successMessage && (
+            <div className="auth-success-box fade-in">
+              <span className="success-dot" />
+              <p>{successMessage}</p>
+            </div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleAuth} className="auth-form-body">
@@ -179,7 +214,7 @@ const Auth = () => {
 
           <div className="auth-switch">
             {isLogin ? '¿No tienes cuenta?' : '¿Ya eres miembro?'}
-            <button className="auth-switch-btn" onClick={() => setIsLogin(!isLogin)}>
+            <button className="auth-switch-btn" onClick={toggleMode}>
               {isLogin ? 'Regístrate gratis' : 'Inicia sesión'}
             </button>
           </div>

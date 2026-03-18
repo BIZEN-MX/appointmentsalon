@@ -1146,6 +1146,7 @@
   background-position: center 35%;
   display: flex;
   align-items: flex-end;
+  margin-bottom: 8rem;
 }
 
 .bk-hero-overlay {
@@ -1187,17 +1188,22 @@
 
 /* Main area */
 .bk-main {
-  padding: 12rem 2rem 10rem; /* Massive separation from top banner */
+  padding: 0 2rem 10rem;
   max-width: 1100px;
 }
 
 /* Progress bar */
 .bk-progress {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 0;
-  margin-bottom: 7rem; /* Large gap from content */
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 6rem;
+  background: white;
+  padding: 2.5rem;
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+  border: 1px solid rgba(212, 201, 189, 0.3);
 }
 
 .bk-progress-step {
@@ -1208,15 +1214,15 @@
 }
 
 .bk-progress-circle {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  border: 2px solid #d4c9bd;
+  border: 2.5px solid #d4c9bd;
   background: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--gris-calido);
   transition: all 0.35s ease;
