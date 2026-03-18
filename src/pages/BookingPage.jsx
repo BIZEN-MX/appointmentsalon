@@ -5,27 +5,27 @@ import { Scissors, Palette, Smile, Hand, Wind, Clock, CheckCircle, ChevronRight,
 
 const SERVICES = [
   {
-    id: 1, name: 'Corte de Cabello Premium', duration: 60, price: '$45', category: 'Hair',
+    id: 1, name: 'Corte de Cabello Premium', duration: 60, price: 850, category: 'Hair',
     icon: Scissors, desc: 'Corte de precisión adaptado a tu estilo y tipo de cabello.',
     color: '#A0652D',
   },
   {
-    id: 2, name: 'Coloración Completa', duration: 120, price: '$120', category: 'Hair',
+    id: 2, name: 'Coloración Completa', duration: 120, price: 1800, category: 'Hair',
     icon: Palette, desc: 'Técnicas de coloración de vanguardia con productos premium.',
     color: '#8B7359',
   },
   {
-    id: 3, name: 'Tratamiento Facial Orgánico', duration: 45, price: '$80', category: 'Spa',
+    id: 3, name: 'Tratamiento Facial Orgánico', duration: 45, price: 1200, category: 'Spa',
     icon: Smile, desc: 'Revitaliza tu piel con ingredientes 100% orgánicos y naturales.',
     color: '#9D8F7B',
   },
   {
-    id: 4, name: 'Manicura Spa', duration: 60, price: '$50', category: 'Beauty',
+    id: 4, name: 'Manicura Spa', duration: 60, price: 650, category: 'Beauty',
     icon: Hand, desc: 'Cuidado completo de manos con esmaltado duradero de alta gama.',
     color: '#615C56',
   },
   {
-    id: 5, name: 'Masaje Relajante Express', duration: 45, price: '$65', category: 'Spa',
+    id: 5, name: 'Masaje Relajante Express', duration: 45, price: 950, category: 'Spa',
     icon: Wind, desc: 'Libera tensiones con nuestro masaje de relajación profunda.',
     color: '#9E9F9D',
   },
@@ -57,6 +57,9 @@ const BookingPage = ({ isAdmin }) => {
   const [calYear, setCalYear]   = useState(today.getFullYear());
   const [calMonth, setCalMonth] = useState(today.getMonth());
   const [selectedDay, setSelectedDay] = useState(today.getDate());
+  const [paymentMethod, setPaymentMethod] = useState(null);
+  const [oxxoRef, setOxxoRef] = useState('');
+  const [speiRef, setSpeiRef] = useState('');
 
   const selectedDate = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
 
@@ -113,29 +116,54 @@ const BookingPage = ({ isAdmin }) => {
     return slots;
   };
 
-  const handleBooking = async (e) => {
-    e?.preventDefault();
-    if (!selectedTime) return;
+  const handleBooking = async (method) => {
     setIsSubmitting(true);
+    
+    // Process payment simulation first
+    if (method === 'card') {
+      setStep(4); // Process loading
+      await new Promise(r => setTimeout(r, 3000));
+    } else if (method === 'oxxo') {
+      const ref = Math.random().toString().slice(2, 16);
+      setOxxoRef(ref);
+    } else if (method === 'spei') {
+      const ref = Math.random().toString().slice(2, 20).toUpperCase();
+      setSpeiRef(ref);
+    }
+
     const bookingData = {
-      date: selectedDate, time: selectedTime,
+      date: selectedDate,
+      time: selectedTime,
       duration: isAdmin ? 30 : selectedService.duration,
       service_name: isAdmin ? 'BLOQUEADO POR DUEÑO' : selectedService.name,
       user_id: user?.id || null,
       user_name: user?.user_metadata?.full_name || user?.email || 'ADMIN',
       user_email: user?.email || 'admin@salon.com',
+      status: method === 'card' ? 'confirmado' : 'pendiente_pago',
+      payment_method: method,
+      deposit_amount: isAdmin ? 0 : (selectedService.price * 0.4),
       is_admin_blocked: isAdmin,
     };
+
     const { error } = await supabase.from('appointments').insert([bookingData]);
     setIsSubmitting(false);
-    if (!error) { if (!isAdmin) setStep(4); setSelectedTime(null); }
-    else alert('Error: ' + error.message);
+    
+    if (!error) {
+      if (!isAdmin) {
+        if (method === 'card') setStep(5); // Success
+        else if (method === 'oxxo') setStep(4.1); // Reference
+        else if (method === 'spei') setStep(4.2); // SPEI Reference
+      }
+    } else {
+      alert('Error: ' + error.message);
+      setStep(3);
+    }
   };
 
   const handleStepChange = async (nextStep) => {
-    // If going to confirmation (Step 3), must be logged in
+    // If going to payment (Step 3), must be logged in
     if (nextStep === 3 && !user && !isAdmin) {
-      navigate('/auth', { state: { from: location.pathname, message: 'Inicia sesión para confirmar tu reserva' } });
+      navigate('/auth', { state: { from: location.pathname, message: 'Inicia sesión para pagar tu anticipo' } });
       return;
     }
     setStep(nextStep);
@@ -172,15 +200,15 @@ const BookingPage = ({ isAdmin }) => {
       <div className="bk-main container">
 
         {/* ── Progress bar (client only) ── */}
-        {!isAdmin && step < 4 && (
+        {!isAdmin && step < 5 && (
           <div className="bk-progress">
-            {['Servicio', 'Fecha & Hora', 'Confirmar'].map((label, i) => (
+            {['Servicio', 'Fecha & Hora', 'Anticipo', 'Finalizar'].map((label, i) => (
               <div key={i} className={`bk-progress-step ${step > i+1 ? 'done' : ''} ${step === i+1 ? 'active' : ''}`}>
                 <div className="bk-progress-circle">
                   {step > i+1 ? <CheckCircle size={16} /> : i+1}
                 </div>
                 <span>{label}</span>
-                {i < 2 && <div className="bk-progress-line" />}
+                {i < 3 && <div className="bk-progress-line" />}
               </div>
             ))}
           </div>
@@ -261,7 +289,7 @@ const BookingPage = ({ isAdmin }) => {
                       <div className="bk-svc-desc">{s.desc}</div>
                       <div className="bk-svc-meta">
                         <span><Clock size={12} /> {s.duration} min</span>
-                        <span className="bk-svc-price">{s.price}</span>
+                        <span className="bk-svc-price">${s.price} MXN</span>
                       </div>
                     </div>
                     {active && <div className="bk-svc-check"><CheckCircle size={20} /></div>}
@@ -342,63 +370,134 @@ const BookingPage = ({ isAdmin }) => {
           </div>
         )}
 
-        {/* ── CLIENT STEP 3: Confirm ── */}
+        {/* ── CLIENT STEP 3: Payment ── */}
         {!isAdmin && step === 3 && (
           <div className="bk-confirm-wrap fade-in">
             <div className="bk-confirm-card">
               <div className="bk-confirm-header">
-                <CheckCircle size={40} color="var(--cafe-miel)" />
-                <h2>Confirma tu cita</h2>
-                <p>Revisa los detalles antes de reservar</p>
+                <Sparkles size={40} color="var(--cafe-miel)" />
+                <h2>Pagar Anticipo (40%)</h2>
+                <p>Para confirmar tu cita, requerimos un anticipo del 40%.</p>
               </div>
 
-              <div className="bk-confirm-details">
+              <div className="bk-confirm-details" style={{ background: '#f8f5f1', borderRadius: '16px', padding: '1.5rem', marginBottom: '2rem' }}>
                 <div className="bk-confirm-row">
                   <span className="bk-confirm-label">Servicio</span>
                   <span className="bk-confirm-value">{selectedService?.name}</span>
                 </div>
                 <div className="bk-confirm-row">
-                  <span className="bk-confirm-label">Duración</span>
-                  <span className="bk-confirm-value">{selectedService?.duration} minutos</span>
+                  <span className="bk-confirm-label">Total del servicio</span>
+                  <span className="bk-confirm-value">${selectedService?.price} MXN</span>
                 </div>
-                <div className="bk-confirm-row">
-                  <span className="bk-confirm-label">Precio</span>
-                  <span className="bk-confirm-value bk-price">{selectedService?.price} MXN</span>
-                </div>
-                <div className="bk-confirm-row">
-                  <span className="bk-confirm-label">Fecha</span>
-                  <span className="bk-confirm-value">{DAYS_ES[new Date(selectedDate+'T12:00').getDay()]} {selectedDay} de {MONTHS_ES[calMonth]}, {calYear}</span>
-                </div>
-                <div className="bk-confirm-row">
-                  <span className="bk-confirm-label">Hora</span>
-                  <span className="bk-confirm-value bk-time">{selectedTime} hrs</span>
-                </div>
-                <div className="bk-confirm-row">
-                  <span className="bk-confirm-label">Cliente</span>
-                  <span className="bk-confirm-value">
-                    <User size={14} style={{ display:'inline', marginRight:'4px' }} />
-                    {user?.user_metadata?.full_name || user?.email}
-                  </span>
+                <div className="bk-confirm-row highlight">
+                  <span className="bk-confirm-label">Anticipo a pagar hoy</span>
+                  <span className="bk-confirm-value bk-price">${(selectedService?.price * 0.4).toFixed(2)} MXN</span>
                 </div>
               </div>
 
-              <div className="bk-confirm-btns">
-                <button className="bk-cta-btn" onClick={handleBooking} disabled={isSubmitting}>
-                  {isSubmitting ? <span className="auth-loading-ring" /> : <>Confirmar Reserva <CheckCircle size={18} /></>}
-                </button>
-                <button className="bk-back-btn" onClick={() => setStep(2)}><ChevronLeft size={16} /> Editar</button>
+              <div className="bk-payment-options">
+                <p style={{ fontSize: '0.85rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--gris-calido)', marginBottom: '1rem', letterSpacing: '1px' }}>Selecciona método de pago:</p>
+                <div className="shipping-options" style={{ gridTemplateColumns: '1fr', gap: '1rem' }}>
+                  <button className="shipping-option-btn" onClick={() => handleBooking('card')}>
+                    <img src="/visaandmastercard.png" alt="Card" className="pm-img" />
+                    <div className="shipping-option-info">
+                      <span className="option-name">Tarjeta Débito/Crédito</span>
+                      <span className="option-desc">Confirmación instantánea</span>
+                    </div>
+                    <ChevronRight size={18} />
+                  </button>
+                  <button className="shipping-option-btn" onClick={() => handleBooking('oxxo')}>
+                    <img src="/oxxo.png" alt="OXXO" className="pm-img" />
+                    <div className="shipping-option-info">
+                      <span className="option-name">Efectivo en OXXO</span>
+                      <span className="option-desc">Paga en cualquier sucursal</span>
+                    </div>
+                    <ChevronRight size={18} />
+                  </button>
+                  <button className="shipping-option-btn" onClick={() => handleBooking('spei')}>
+                    <img src="/spei.png" alt="SPEI" className="pm-img" />
+                    <div className="shipping-option-info">
+                      <span className="option-name">Transferencia SPEI</span>
+                      <span className="option-desc">Banca móvil las 24 hrs</span>
+                    </div>
+                    <ChevronRight size={18} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="bk-confirm-btns" style={{ marginTop: '2rem' }}>
+                <button className="bk-back-btn" onClick={() => setStep(2)}><ChevronLeft size={16} /> Volver</button>
               </div>
             </div>
           </div>
         )}
 
-        {/* ── CLIENT STEP 4: Success ── */}
+        {/* ── CLIENT STEP 4: Processing (Card only) ── */}
         {!isAdmin && step === 4 && (
+          <div className="bk-confirm-wrap fade-in">
+            <div className="bk-confirm-card" style={{ textAlign: 'center' }}>
+              <div className="auth-loading-ring" style={{ width: '60px', height: '60px', margin: '0 auto 2rem' }} />
+              <h3>Procesando pago seguro...</h3>
+              <p>Estamos validando tu transacción con Mercado Pago. No cierres esta ventana.</p>
+            </div>
+          </div>
+        )}
+
+        {/* ── CLIENT STEP 4.1: OXXO Reference ── */}
+        {!isAdmin && step === 4.1 && (
+          <div className="bk-confirm-wrap fade-in">
+            <div className="bk-confirm-card">
+              <div className="bk-confirm-header">
+                <img src="/oxxo.png" alt="OXXO" style={{ height: '40px', marginBottom: '1rem' }} />
+                <h2>Ficha de Pago OXXO</h2>
+                <p>Presenta este número en caja para completar tu anticipo.</p>
+              </div>
+              <div className="oxxo-ref-box" style={{ background: '#f5f5f5', border: '2px dashed #999', borderRadius: '12px', padding: '2rem', textAlign: 'center', margin: '1.5rem 0' }}>
+                <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: '#666' }}>Número de Referencia</span>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, letterSpacing: '2px', color: '#b91c1c', margin: '0.5rem 0' }}>{oxxoRef}</div>
+                <p style={{ fontSize: '0.8rem', margin: '0' }}>Vence en 24 horas</p>
+              </div>
+              <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '2rem' }}>
+                ⚠️ Tu cita quedará **pre-reservada** y se confirmará automáticamente en cuanto realices el pago en OXXO.
+              </p>
+              <button className="bk-cta-btn" onClick={() => setStep(5)}>He guardado mi ficha <ArrowRight size={18} /></button>
+            </div>
+          </div>
+        )}
+
+        {/* ── CLIENT STEP 4.2: SPEI Reference ── */}
+        {!isAdmin && step === 4.2 && (
+          <div className="bk-confirm-wrap fade-in">
+            <div className="bk-confirm-card">
+              <div className="bk-confirm-header">
+                <img src="/spei.png" alt="SPEI" style={{ height: '40px', marginBottom: '1rem' }} />
+                <h2>Transferencia SPEI</h2>
+                <p>Realiza la transferencia por ${(selectedService?.price * 0.4).toFixed(2)} MXN.</p>
+              </div>
+              <div className="spei-details" style={{ background: '#f0f4ff', borderRadius: '16px', padding: '1.5rem', margin: '1.5rem 0' }}>
+                <div className="bk-confirm-row"><span className="bk-confirm-label">Banco</span> <span className="bk-confirm-value">STP</span></div>
+                <div className="bk-confirm-row"><span className="bk-confirm-label">CLABE</span> <span className="bk-confirm-value">6461 8011 0400 {speiRef.slice(0,6)}</span></div>
+                <div className="bk-confirm-row"><span className="bk-confirm-label">Concepto</span> <span className="bk-confirm-value">{speiRef.slice(0,8)}</span></div>
+              </div>
+              <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '2rem' }}>
+                Tu cita se confirmará en cuanto el sistema reciba la transferencia (aprox. 5 min).
+              </p>
+              <button className="bk-cta-btn" onClick={() => setStep(5)}>Ya realicé el pago <ArrowRight size={18} /></button>
+            </div>
+          </div>
+        )}
+
+        {/* ── CLIENT STEP 5: Success ── */}
+        {!isAdmin && step === 5 && (
           <div className="bk-success fade-in">
             <div className="bk-success-glow" />
             <div className="bk-success-icon">✨</div>
-            <h2>¡Cita Confirmada!</h2>
+            <h2>¡Cita Programada!</h2>
             <p>Te esperamos el <strong>{selectedDay} de {MONTHS_ES[calMonth]}</strong> a las <strong>{selectedTime} hrs</strong>.</p>
+            <div className="bk-success-details" style={{ background: 'rgba(255,255,255,0.2)', padding: '1.5rem', borderRadius: '16px', margin: '1.5rem 0', backdropFilter: 'blur(10px)' }}>
+              <p style={{ margin: 0 }}>Anticipo del 40%: <strong>${(selectedService?.price * 0.4).toFixed(2)} MXN</strong></p>
+              <p style={{ margin: 0, opacity: 0.8 }}>Restante a pagar en sucursal: <strong>${(selectedService?.price * 0.6).toFixed(2)} MXN</strong></p>
+            </div>
             <p className="bk-success-sub">Recibirás un recordatorio por correo electrónico a {user?.email}.</p>
             <button className="bk-cta-btn" onClick={resetBooking}>Hacer otra reserva</button>
           </div>

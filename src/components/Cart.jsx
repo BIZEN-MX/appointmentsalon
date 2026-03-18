@@ -266,7 +266,7 @@ const Cart = () => {
               </div>
               <div className="shipping-options">
                 <button className={`shipping-option-btn ${paymentMethod === 'card' ? 'active' : ''}`} onClick={() => { setPaymentMethod('card'); setStep(STEP_CARD); }}>
-                  <img src="/visamastercard.png" alt="Visa/Mastercard" className="pm-img" />
+                  <img src="/visaandmastercard.png" alt="Visa/Mastercard" className="pm-img" />
                   <div className="shipping-option-info">
                     <span className="option-name">Tarjeta de crédito / débito</span>
                     <span className="option-desc">Visa, Mastercard, American Express</span>
