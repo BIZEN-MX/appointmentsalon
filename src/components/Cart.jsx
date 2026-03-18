@@ -261,19 +261,19 @@ const Cart = () => {
           {step === STEP_PAYMENT && (
             <div className="mp-step-content fade-in">
               <div className="mp-banner">
-                <img src="https://http2.mlstatic.com/frontend-assets/mp-web-navigation/ui-navigation/5.21.22/mercadopago/logo__large@2x.png" alt="Mercado Pago" className="mp-logo" />
+                <img src="/mercadopago.png" alt="Mercado Pago" className="mp-logo" />
                 <span>Pago 100% seguro</span>
               </div>
               <div className="shipping-options">
                 <button className={`shipping-option-btn ${paymentMethod === 'card' ? 'active' : ''}`} onClick={() => { setPaymentMethod('card'); setStep(STEP_CARD); }}>
-                  <span className="pm-emoji">💳</span>
+                  <img src="/visamastercard.png" alt="Visa/Mastercard" className="pm-img" />
                   <div className="shipping-option-info">
                     <span className="option-name">Tarjeta de crédito / débito</span>
                     <span className="option-desc">Visa, Mastercard, American Express</span>
                   </div>
                 </button>
                 <button className={`shipping-option-btn ${paymentMethod === 'oxxo' ? 'active' : ''}`} onClick={() => { setPaymentMethod('oxxo'); handleOxxoPay(); }}>
-                  <span className="pm-emoji">🏪</span>
+                  <img src="/oxxo.png" alt="OXXO" className="pm-img" />
                   <div className="shipping-option-info">
                     <span className="option-name">Efectivo en OXXO</span>
                     <span className="option-desc">Genera tu ficha y paga en cualquier OXXO</span>
@@ -294,7 +294,7 @@ const Cart = () => {
           {step === STEP_CARD && (
             <div className="mp-step-content fade-in">
               <div className="mp-banner">
-                <img src="https://http2.mlstatic.com/frontend-assets/mp-web-navigation/ui-navigation/5.21.22/mercadopago/logo__large@2x.png" alt="Mercado Pago" className="mp-logo" />
+                <img src="/mercadopago.png" alt="Mercado Pago" className="mp-logo" />
                 <span>Pago 100% seguro</span>
               </div>
               <form className="card-form" onSubmit={handleCardPay}>

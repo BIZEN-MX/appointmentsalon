@@ -2821,8 +2821,10 @@
   flex-shrink: 0;
 }
 
-.pm-emoji {
-  font-size: 1.5rem;
+.pm-img {
+  width: 50px;
+  height: auto;
+  object-fit: contain;
   flex-shrink: 0;
 }
 
