@@ -758,6 +758,357 @@
   color: white;
 }
 
+/* ── TESTIMONIALS SECTION ──────────────────────────── */
+.testimonials-section {
+  padding: 8rem 0;
+  background: linear-gradient(180deg, var(--gris-perla) 0%, #ede8e1 100%);
+}
+
+.tst-header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 5rem;
+}
+
+.tst-eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: var(--cafe-miel);
+  margin-bottom: 1rem;
+}
+
+.tst-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--negro-espresso);
+  margin: 0 0 1rem;
+}
+
+.tst-subtitle {
+  font-size: 1rem;
+  color: var(--greige);
+  margin: 0;
+  line-height: 1.7;
+}
+
+.tst-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.tst-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 6px 30px rgba(0,0,0,0.06);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.tst-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 50px rgba(0,0,0,0.12);
+}
+
+/* Before / After photos */
+.tst-photos {
+  display: flex;
+  align-items: stretch;
+  height: 180px;
+  position: relative;
+}
+
+.tst-photo-wrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.tst-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.tst-card:hover .tst-photo {
+  transform: scale(1.05);
+}
+
+.tst-photo-label {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(33, 31, 28, 0.65);
+  color: white;
+  backdrop-filter: blur(4px);
+}
+
+.tst-photo-label.after {
+  background: rgba(160, 101, 45, 0.85);
+}
+
+.tst-photo-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  background: white;
+  font-size: 1rem;
+  color: var(--cafe-miel);
+  font-weight: 700;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+/* Review body */
+.tst-body {
+  padding: 1.5rem 1.5rem 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.tst-quote-icon {
+  color: var(--beige-suave);
+}
+
+.tst-text {
+  font-size: 0.9rem;
+  color: var(--greige);
+  line-height: 1.7;
+  margin: 0;
+  font-style: italic;
+}
+
+.tst-stars {
+  display: flex;
+  gap: 3px;
+}
+
+.tst-service-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(160, 101, 45, 0.1);
+  color: var(--cafe-miel);
+  width: fit-content;
+}
+
+/* Client info */
+.tst-client {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem 1.5rem;
+  border-top: 1px solid #f0ece6;
+}
+
+.tst-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--beige-suave);
+  flex-shrink: 0;
+}
+
+.tst-client-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.tst-client-info strong {
+  font-size: 0.9rem;
+  color: var(--negro-espresso);
+  font-weight: 700;
+}
+
+.tst-client-info span {
+  font-size: 0.75rem;
+  color: var(--gris-calido);
+}
+
+@media (max-width: 768px) {
+  .tst-grid { grid-template-columns: 1fr; }
+  .testimonials-section { padding: 5rem 0; }
+}
+
+/* ── WHY US SECTION ──────────────────────────────── */
+.why-us-section {
+  padding: 8rem 0;
+  background: var(--negro-espresso);
+}
+
+.why-us-section .tst-header {
+  margin-bottom: 5rem;
+}
+
+.why-us-section .tst-eyebrow { color: var(--cafe-miel); }
+
+.why-us-section .tst-title {
+  color: white;
+}
+
+.why-us-section .tst-subtitle {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.why-card {
+  padding: 2.5rem 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.why-card:hover {
+  background: rgba(160, 101, 45, 0.08);
+  border-color: rgba(160, 101, 45, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.why-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(160, 101, 45, 0.15);
+  color: var(--cafe-miel);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.why-card:hover .why-icon {
+  background: rgba(160, 101, 45, 0.3);
+}
+
+.why-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: white;
+  margin: 0;
+}
+
+.why-card p {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.75;
+  margin: 0;
+}
+
+@media (max-width: 992px) {
+  .why-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .why-grid { grid-template-columns: 1fr; }
+  .why-us-section { padding: 5rem 0; }
+}
+
+/* ── CTA BANNER ──────────────────────────────────── */
+.cta-banner {
+  position: relative;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.cta-banner-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=2070&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center 30%;
+  transform: scale(1.05);
+  animation: heroZoom 16s ease-in-out infinite alternate;
+}
+
+.cta-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    130deg,
+    rgba(33, 31, 28, 0.9) 0%,
+    rgba(139, 115, 89, 0.6) 60%,
+    rgba(33, 31, 28, 0.85) 100%
+  );
+}
+
+.cta-banner-content {
+  position: relative;
+  z-index: 2;
+  padding: 6rem 2rem;
+  max-width: 680px;
+}
+
+.cta-eyebrow {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: var(--cafe-miel);
+  margin-bottom: 1.2rem;
+}
+
+.cta-banner-content h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  color: white;
+  line-height: 1.15;
+  margin: 0 0 1.5rem;
+}
+
+.cta-banner-content h2 em {
+  color: var(--cafe-miel);
+  font-style: italic;
+}
+
+.cta-banner-content p {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+  margin: 0 0 2.5rem;
+  max-width: 480px;
+}
+
+.cta-banner-btns {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+
 /* Booking System Styles */
 .admin-toggle {
   padding: 0.5rem 1rem;

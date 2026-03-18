@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { useCart } from '../context/CartContext';
 import { X, Trash2, Plus, Minus, ShoppingBag, CreditCard, ArrowLeft, Building2, Store } from 'lucide-react';
@@ -36,6 +36,7 @@ const STEP_SPEI     = 'spei';
 const Cart = () => {
   const { cart, removeFromCart, updateQuantity, cartTotal, clearCart, isCartOpen, setIsCartOpen } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [step, setStep] = useState(STEP_CART);
   const [shippingMethod, setShippingMethod] = useState('pickup');
@@ -105,6 +106,23 @@ const Cart = () => {
     const ok = await saveOrder('card', 'pagado');
     if (ok) { clearCart(); setStep(STEP_SUCCESS); }
     else setStep(STEP_CARD);
+  };
+
+  const handleNextStep = async () => {
+    // Check auth before leaving the cart step or proceeding to payment
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      setIsCartOpen(false);
+      navigate('/auth', { state: { from: location.pathname, message: 'Inicia sesión para completar tu compra' } });
+      return;
+    }
+
+    if (step === STEP_CART) {
+      setStep(STEP_SHIPPING);
+    } else if (step === STEP_SHIPPING) {
+      setStep(STEP_PAYMENT);
+    }
   };
 
   const handleOxxoPay = async () => {
@@ -439,7 +457,7 @@ const Cart = () => {
             </div>
             <button
               className="checkout-btn btn-primary"
-              onClick={() => setStep(step === STEP_CART ? STEP_SHIPPING : STEP_PAYMENT)}
+              onClick={handleNextStep}
             >
               {step === STEP_CART ? 'CONTINUAR' : 'ELEGIR MÉTODO DE PAGO'} <CreditCard size={18} />
             </button>

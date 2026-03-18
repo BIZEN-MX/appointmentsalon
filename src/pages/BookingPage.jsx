@@ -79,8 +79,7 @@ const BookingPage = ({ isAdmin }) => {
 
   const checkUser = async () => {
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session && !isAdmin) navigate('/auth');
-    else setUser(session?.user ?? null);
+    setUser(session?.user ?? null);
   };
 
   const fetchAppointments = async () => {
@@ -131,6 +130,15 @@ const BookingPage = ({ isAdmin }) => {
     setIsSubmitting(false);
     if (!error) { if (!isAdmin) setStep(4); setSelectedTime(null); }
     else alert('Error: ' + error.message);
+  };
+
+  const handleStepChange = async (nextStep) => {
+    // If going to confirmation (Step 3), must be logged in
+    if (nextStep === 3 && !user && !isAdmin) {
+      navigate('/auth', { state: { from: location.pathname, message: 'Inicia sesión para confirmar tu reserva' } });
+      return;
+    }
+    setStep(nextStep);
   };
 
   const resetBooking = () => { setStep(1); setSelectedService(null); setSelectedTime(null); };
@@ -265,7 +273,7 @@ const BookingPage = ({ isAdmin }) => {
               <button
                 className="bk-cta-btn"
                 disabled={!selectedService}
-                onClick={() => setStep(2)}
+                onClick={() => handleStepChange(2)}
               >
                 Continuar <ChevronRight size={18} />
               </button>
@@ -327,7 +335,7 @@ const BookingPage = ({ isAdmin }) => {
 
             <div className="bk-footer-row col-span-2">
               <button className="bk-back-btn" onClick={() => setStep(1)}><ChevronLeft size={18} /> Volver</button>
-              <button className="bk-cta-btn" disabled={!selectedTime} onClick={() => setStep(3)}>
+              <button className="bk-cta-btn" disabled={!selectedTime} onClick={() => handleStepChange(3)}>
                 Ver resumen <ChevronRight size={18} />
               </button>
             </div>
