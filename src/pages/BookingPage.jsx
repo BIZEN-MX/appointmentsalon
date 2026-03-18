@@ -90,16 +90,31 @@ const BookingPage = ({ isAdmin }) => {
     if (!error) setBookedSlots(data || []);
   };
 
-  const timeToMinutes = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+  const timeToMinutes = (t) => { 
+    if (!t) return 0;
+    const parts = t.split(':').map(Number); 
+    return (parts[0] || 0) * 60 + (parts[1] || 0); 
+  };
 
   const checkAvailability = (time, duration) => {
     const start = timeToMinutes(time);
     const end   = start + duration;
+    
+    // Salon hours: 9 AM - 8 PM (20:00)
     if (end > 20 * 60) return false;
+
     return !bookedSlots.some(s => {
-      if (s.date !== selectedDate) return false;
-      const ss = timeToMinutes(s.time), se = ss + s.duration;
-      return start < se && end > ss;
+      // Ensure date comparison is strict (strip time if present in DB string)
+      const slotDate = String(s.date).split('T')[0];
+      if (slotDate !== selectedDate) return false;
+
+      const ss = timeToMinutes(s.time);
+      const s_dur = Number(s.duration) || 30; // Default to 30 if missing
+      const se = ss + s_dur;
+
+      // Overlap logic: A starts before B ends AND A ends after B starts
+      const isOverlapping = start < se && end > ss;
+      return isOverlapping;
     });
   };
 
