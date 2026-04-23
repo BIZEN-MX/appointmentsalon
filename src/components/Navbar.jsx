@@ -41,12 +41,14 @@ const Navbar = ({ isAdmin, setIsAdmin }) => {
           <li><Link to="/">Inicio</Link></li>
           <li><a href="/#services">Servicios</a></li>
           <li><Link to="/marketplace" className="nav-icon-link"><ShoppingBag size={20} /> Marketplace</Link></li>
-          <li>
-            <button className="cart-trigger" onClick={() => setIsCartOpen(true)}>
-              <ShoppingCart size={20} />
-              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-            </button>
-          </li>
+          {!isAdmin && (
+            <li>
+              <button className="cart-trigger" onClick={() => setIsCartOpen(true)}>
+                <ShoppingCart size={20} />
+                {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+              </button>
+            </li>
+          )}
           <li>
             <button 
               className="btn-nav" 

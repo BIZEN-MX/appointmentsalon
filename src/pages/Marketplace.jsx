@@ -149,13 +149,15 @@ const Marketplace = ({ isAdmin }) => {
               <div key={product.id} className="mp-card">
                 <div className="mp-card-img-wrap">
                   <img src={product.image_url} alt={product.name} className="mp-card-img" />
-                  <button
-                    className={`mp-wishlist ${wishlist.includes(product.id) ? 'active' : ''}`}
-                    onClick={() => toggleWishlist(product.id)}
-                    title="Añadir a favoritos"
-                  >
-                    <Heart size={18} fill={wishlist.includes(product.id) ? 'currentColor' : 'none'} />
-                  </button>
+                  {!isAdmin && (
+                    <button
+                      className={`mp-wishlist ${wishlist.includes(product.id) ? 'active' : ''}`}
+                      onClick={() => toggleWishlist(product.id)}
+                      title="Añadir a favoritos"
+                    >
+                      <Heart size={18} fill={wishlist.includes(product.id) ? 'currentColor' : 'none'} />
+                    </button>
+                  )}
                   {product.stock <= 3 && product.stock > 0 && (
                     <span className="mp-badge-low">Últimas unidades</span>
                   )}
@@ -174,17 +176,19 @@ const Marketplace = ({ isAdmin }) => {
                       <span className="mp-price">${Number(product.price).toFixed(2)}</span>
                       <span className="mp-stock">{product.stock > 0 ? `${product.stock} disponibles` : 'Agotado'}</span>
                     </div>
-                    <button
-                      className={`mp-add-btn ${addedMap[product.id] ? 'added' : ''}`}
-                      onClick={() => handleAddToCart(product)}
-                      disabled={product.stock === 0}
-                    >
-                      {addedMap[product.id] ? (
-                        '✓ Añadido'
-                      ) : (
-                        <><ShoppingCart size={16} /> Añadir</>
-                      )}
-                    </button>
+                    {!isAdmin && (
+                      <button
+                        className={`mp-add-btn ${addedMap[product.id] ? 'added' : ''}`}
+                        onClick={() => handleAddToCart(product)}
+                        disabled={product.stock === 0}
+                      >
+                        {addedMap[product.id] ? (
+                          '✓ Añadido'
+                        ) : (
+                          <><ShoppingCart size={16} /> Añadir</>
+                        )}
+                      </button>
+                    )}
                   </div>
 
                   {/* Admin actions bottom row */}

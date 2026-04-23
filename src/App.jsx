@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { Instagram, Facebook } from 'lucide-react';
+import { Instagram, Facebook, MapPin, Phone, Mail } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import BookingPage from './pages/BookingPage';
 import Marketplace from './pages/Marketplace';
 import Auth from './pages/Auth';
+import AdminDashboard from './pages/AdminDashboard';
 import './App.css';
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
         <Route path="/booking" element={<BookingPage isAdmin={isAdmin} />} />
         <Route path="/marketplace" element={<Marketplace isAdmin={isAdmin} />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
 
       {/* Footer — hidden on auth page */}
@@ -36,10 +38,10 @@ const App = () => {
             </div>
             <div className="footer-contact">
               <h4>Contacto</h4>
-              <p>📍 Calle Premium 123, Polanco, CDMX</p>
-              <p>📍 Av. Libertad 456, Roma Norte, CDMX</p>
-              <p>📞 +52 55 1234 5678</p>
-              <p>✉️ info@appointment-salon.com</p>
+              <p><MapPin size={16} /> Calle Premium 123, Polanco, CDMX</p>
+              <p><MapPin size={16} /> Av. Libertad 456, Roma Norte, CDMX</p>
+              <p><Phone size={16} /> +52 55 1234 5678</p>
+              <p><Mail size={16} /> info@appointment-salon.com</p>
             </div>
             <div className="footer-social">
               <h4>Síguenos</h4>

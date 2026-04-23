@@ -1,39 +1,25 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import { ArrowRight, Clock, Star, Sparkles, Quote, Shield, Leaf, Award, CalendarCheck, Users, Zap } from 'lucide-react';
+import { ArrowRight, Clock, Star, Sparkles, Quote, Shield, Leaf, Award, CalendarCheck, Users, Zap, Phone } from 'lucide-react';
 
-const SERVICES = [
+const BRANCHES = [
   {
     id: 1,
-    name: 'Salón de Cabello',
-    tagline: 'Estilo & Coloración',
-    description: 'Estilismo experto, coloración y tratamientos para tu máximo esplendor.',
-    duration: '60–120 min',
-    price: 'Desde $45',
-    image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2069&auto=format&fit=crop',
-    serviceObj: { id: 1, name: 'Corte de Cabello Premium', duration: 60, price: '$45', category: 'Hair' },
+    name: 'Lomas de Angelópolis',
+    tagline: 'Paseo Sinfonía',
+    description: 'Nuestra sucursal insignia con vista a la ciudad y un diseño premium. Experimenta el lujo en cada detalle.',
+    image: '/lomas-6.jpg',
+    branchObj: { id: 1, name: 'Lomas de Angelópolis', address: 'Paseo Sinfonía, Lomas de Angelópolis' }
   },
   {
     id: 2,
-    name: 'Cuidado Facial',
-    tagline: 'Tratamientos Orgánicos',
-    description: 'Faciales nutritivos con ingredientes orgánicos de origen ético para piel radiante.',
-    duration: '45–90 min',
-    price: 'Desde $80',
-    image: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc2069?q=80&w=2070&auto=format&fit=crop',
-    serviceObj: { id: 3, name: 'Tratamiento Facial Orgánico', duration: 45, price: '$80', category: 'Spa' },
-  },
-  {
-    id: 3,
-    name: 'Masajes & Spa',
-    tagline: 'Relajación Total',
-    description: 'Relájate con masajes corporales y tratamientos revitalizantes en un entorno de lujo.',
-    duration: '45–90 min',
-    price: 'Desde $65',
-    image: 'https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=2070&auto=format&fit=crop',
-    serviceObj: { id: 5, name: 'Masaje Relajante Express', duration: 45, price: '$65', category: 'Spa' },
-  },
+    name: 'Explanada',
+    tagline: 'Centro Comercial Explanada',
+    description: 'Ubicación conveniente con amplio estacionamiento. Un oasis de relajación perfecto para tu rutina de cuidado.',
+    image: '/explanada-1.jpg',
+    branchObj: { id: 2, name: 'Centro Comercial Explanada', address: 'Anillo Periférico Ecológico 210' }
+  }
 ];
 
 const TRUST_BADGES = [
@@ -51,9 +37,6 @@ const TESTIMONIALS = [
     service: 'Coloración Completa',
     rating: 5,
     text: 'Absolutamente increíble. Llegué con el cabello opaco y salí sintiéndome una celebridad. El ambiente es de otro nivel y las estilistas saben exactamente qué hacen. Ya hice mi cita para el próximo mes.',
-    photo: 'https://randomuser.me/api/portraits/women/44.jpg',
-    before: 'https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?q=80&w=400&auto=format&fit=crop',
-    after: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=400&auto=format&fit=crop',
   },
   {
     id: 2,
@@ -62,9 +45,6 @@ const TESTIMONIALS = [
     service: 'Tratamiento Facial Orgánico',
     rating: 5,
     text: 'Mi piel nunca había lucido tan bien. El facial con ingredientes orgánicos fue una experiencia completamente transformadora. Las especialistas son altamente profesionales y el espacio es precioso.',
-    photo: 'https://randomuser.me/api/portraits/women/68.jpg',
-    before: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?q=80&w=400&auto=format&fit=crop',
-    after: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?q=80&w=400&auto=format&fit=crop',
   },
   {
     id: 3,
@@ -73,9 +53,6 @@ const TESTIMONIALS = [
     service: 'Corte de Cabello Premium',
     rating: 5,
     text: 'Llevaba años buscando un salón que realmente entendiera mi tipo de cabello. Aquí lo encontré. El corte es perfecto, el trato fue excepcional y el resultado superó todas mis expectativas.',
-    photo: 'https://randomuser.me/api/portraits/women/32.jpg',
-    before: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?q=80&w=400&auto=format&fit=crop',
-    after: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=400&auto=format&fit=crop',
   },
   {
     id: 4,
@@ -84,9 +61,6 @@ const TESTIMONIALS = [
     service: 'Masaje Relajante Express',
     rating: 5,
     text: 'Después del masaje sentí que dormí tres días seguidos, en el buen sentido. Un espacio de paz total. El personal es muy atento y el ambiente te pone en modo relax desde que cruzas la puerta.',
-    photo: 'https://randomuser.me/api/portraits/women/17.jpg',
-    before: 'https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?q=80&w=400&auto=format&fit=crop',
-    after: 'https://images.unsplash.com/photo-1522338242992-e1a54906a8da?q=80&w=400&auto=format&fit=crop',
   },
 ];
 
@@ -155,49 +129,88 @@ const Home = () => {
         </div>
       </header>
 
-      {/* ── SERVICES ──────────────────────────────── */}
+      {/* ── BRANCHES ──────────────────────────────── */}
       <section id="services" className="services-v2" ref={servicesRef}>
         <div className="container">
           <div className="sv2-header">
-            <span className="sv2-eyebrow">Lo que hacemos</span>
-            <h2 className="sv2-title">Nuestros Servicios</h2>
-            <p className="sv2-subtitle">Tratamientos seleccionados diseñados para tu esencia única.</p>
+            <span className="sv2-eyebrow">Dónde Encontrarnos</span>
+            <h2 className="sv2-title">Nuestras Sucursales</h2>
+            <p className="sv2-subtitle">Dos ubicaciones exclusivas diseñadas para brindarte la mejor experiencia de lujo y bienestar.</p>
           </div>
 
-          <div className="sv2-grid">
-            {SERVICES.map((s, i) => (
+          <div className="sv2-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '3rem', maxWidth: '1000px', margin: '0 auto' }}>
+            {BRANCHES.map((b, i) => (
               <div
-                key={s.id}
-                className={`sv2-card ${activeService === s.id ? 'active' : ''}`}
-                onMouseEnter={() => setActiveService(s.id)}
+                key={b.id}
+                className={`sv2-card ${activeService === b.id ? 'active' : ''}`}
+                onMouseEnter={() => setActiveService(b.id)}
                 onMouseLeave={() => setActiveService(null)}
                 style={{ animationDelay: `${i * 0.15}s` }}
               >
                 <div className="sv2-card-img-wrap">
-                  <img src={s.image} alt={s.name} className="sv2-card-img" />
+                  <img src={b.image} alt={b.name} className="sv2-card-img" />
                   <div className="sv2-card-overlay" />
-                  <span className="sv2-card-tag">{s.tagline}</span>
+                  <span className="sv2-card-tag">{b.tagline}</span>
                 </div>
                 <div className="sv2-card-body">
-                  <h3 className="sv2-card-title">{s.name}</h3>
-                  <p className="sv2-card-desc">{s.description}</p>
-                  <div className="sv2-meta">
-                    <span className="sv2-meta-item"><Clock size={14} /> {s.duration}</span>
-                    <span className="sv2-price">{s.price}</span>
-                  </div>
+                  <h3 className="sv2-card-title">{b.name}</h3>
+                  <p className="sv2-card-desc">{b.description}</p>
+                  <div style={{ flexGrow: 1 }} />
                   <button 
                     className="sv2-cta" 
                     onClick={async () => {
                       const { data: { session } } = await supabase.auth.getSession();
-                      if (!session) navigate('/auth', { state: { from: '/booking', selectedService: s.serviceObj } });
-                      else navigate('/booking', { state: { selectedService: s.serviceObj } });
+                      if (!session) navigate('/auth', { state: { from: '/booking', selectedBranch: b.branchObj } });
+                      else navigate('/booking', { state: { selectedBranch: b.branchObj } });
                     }}
                   >
-                    Reservar ahora <ArrowRight size={16} />
+                    Agendar en esta sucursal <ArrowRight size={16} />
                   </button>
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── SERVICES SHOWCASE ───────────────────── */}
+      <section className="home-services-showcase">
+        <div className="container">
+          <div className="sv2-header">
+            <span className="sv2-eyebrow">Lo que ofrecemos</span>
+            <h2 className="sv2-title">Algunos de nuestros servicios</h2>
+            <p className="sv2-subtitle">Conoce algunas de nuestras especialidades diseñadas para realzar tu belleza natural.</p>
+          </div>
+
+          <div className="home-services-grid">
+            {[
+              { name: 'Corte y Estilismo', image: '/explanada-1.jpg', desc: 'Cortes vanguardistas, clásicos y diseños de fleco.' },
+              { name: 'Diseños de Color', image: '/lomas-1.jpg', desc: 'Balayage, Airtouch y técnicas premium de iluminación.' },
+              { name: 'Tratamientos Capilares', image: '/lomas-4.jpg', desc: 'Reparación profunda, Olaplex y rituales de spa capilar.' },
+              { name: 'Nails & Spa', image: '/cat-nails.png', desc: 'Manicura, pedicura de lujo y diseños con Polygel/Acrílico.' },
+              { name: 'Depilación (Wax)', image: '/cat-wax.png', desc: 'Diseño de cejas, facial y depilación corporal con cera.' },
+              { name: 'Glam & Makeup', image: '/cat-glam.png', desc: 'Maquillaje social, laminado de cejas y lash lifting.' }
+            ].map((s, i) => (
+              <div key={s.name} className="home-service-card fade-in" style={{ animationDelay: `${i * 0.1}s` }}>
+                <div className="hsvc-img-wrap">
+                  <img src={s.image} alt={s.name} />
+                  <div className="hsvc-overlay" />
+                </div>
+                <div className="hsvc-content">
+                  <h3>{s.name}</h3>
+                  <p>{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: '4rem' }}>
+            <button 
+              className="btn-hero-primary"
+              onClick={() => navigate('/booking')}
+            >
+              Ver menú completo <ArrowRight size={18} />
+            </button>
           </div>
         </div>
       </section>
@@ -223,21 +236,8 @@ const Home = () => {
           <div className="tst-grid">
             {TESTIMONIALS.map((t, i) => (
               <div key={t.id} className="tst-card" style={{ animationDelay: `${i * 0.1}s` }}>
-                {/* Before / After photos */}
-                <div className="tst-photos">
-                  <div className="tst-photo-wrap">
-                    <img src={t.before} alt="Antes" className="tst-photo" />
-                    <span className="tst-photo-label">Antes</span>
-                  </div>
-                  <div className="tst-photo-divider">→</div>
-                  <div className="tst-photo-wrap">
-                    <img src={t.after} alt="Después" className="tst-photo" />
-                    <span className="tst-photo-label after">Después</span>
-                  </div>
-                </div>
-
                 {/* Review body */}
-                <div className="tst-body">
+                <div className="tst-body" style={{ paddingTop: '1.5rem' }}>
                   <Quote size={22} className="tst-quote-icon" />
                   <p className="tst-text">"{t.text}"</p>
                   <div className="tst-stars">
@@ -250,7 +250,9 @@ const Home = () => {
 
                 {/* Client info */}
                 <div className="tst-client">
-                  <img src={t.photo} alt={t.name} className="tst-avatar" />
+                  <div className="tst-avatar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--cafe-miel)', color: 'white', fontWeight: 'bold', fontSize: '1.2rem' }}>
+                    {t.name.charAt(0)}
+                  </div>
                   <div className="tst-client-info">
                     <strong>{t.name}</strong>
                     <span>{t.location}</span>
@@ -324,7 +326,7 @@ const Home = () => {
             >
               RESERVAR AHORA <ArrowRight size={18} />
             </button>
-            <a href="tel:+525512345678" className="btn-hero-ghost">📞 Llamar al salón</a>
+            <a href="tel:+525512345678" className="btn-hero-ghost"><Phone size={18} /> Llamar al salón</a>
           </div>
         </div>
       </section>
